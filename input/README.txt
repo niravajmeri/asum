@@ -1,0 +1,1 @@
+I truncated the Amazon data set that I used in the paper, and left only three documents so that this example shows how the input files are structured. Since this is part of the original data set, a lot more words are indexed (see WordList.txt), and most of them do not appear in this example.
