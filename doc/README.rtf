@@ -1,0 +1,128 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf350
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11500\viewh12900\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\b\fs30 \cf0 Description
+\b0\fs24 \
+\
+This implementation uses Gibbs sampling for estimation.\
+\
+\
+\
+
+\b\fs28 Input Files
+\b0\fs24 \
+\
+- BagOfSentences.txt (required)\
+- WordList.txt (reqiured)\
+- SentiWords-0.txt, SentiWords-1.txt, \'85 (optional)\
+\
+
+\b BagOfSentences.txt
+\b0 \
+	This file is a word-list representation of the documents in the corpus.\
+	For each document, the first line is the number of sentences. From the next line comes a list of word indices in one line for one sentence.\
+\
+
+\b WordList.txt
+\b0 \
+	This file maps the words with word indices. Each word is written in one line. It is assumed that the first word in the file has the index 0, the second word has the index 1, and so on and so forth.\
+\
+
+\b SentiWords-0.txt, SentiWords-1.txt, \'85
+\b0 \
+	These files are sentiment seed words. The file number should start from 0 and increase gradually. The first seed file is assumed to be the seed words for the first sentiment, and so on. However, the number of the seed files does not have to be equal to the number of sentiments. If there are two seed files, for example, and the number of sentiments is set to 4, then the last two sentiments have no seed words. Similarly, if the number of seed files exceeds the number of sentiments, the "leftover" seed files are simply ignored.\
+	Note that these files contain words in their original form as in WordList.txt. The reason is at least twofold. A seed word may not appear in the documents and thus have no index. In addition, many experiments would be conducted with different seed words, and it is tiresome to find their indices every time. Don't forget to write down stemmed forms of the seed words in the seed files if you use stemming.\
+\
+\
+\
+
+\b\fs30 Output Files
+\b0\fs24 \
+\
+All output file names have the form of\
+	STO2-T[t]-S[s]([d])-A[a]-B[b]-G[g]-I[i]-[variable].csv\
+where\
+	t: number of topics(aspects) per sentiment\
+	s: number of sentiments\
+	d: number of seed word files used\
+	a: alpha\
+	b: beta\
+	g: gamma\
+	i: number of sampling iterations\
+	variable: inferred variable\
+\
+
+\b\fs28 Variables
+\b0\fs24 \
+	
+\b Theta
+\b0 \
+		Document X Aspect Matrix\
+		Each column has a header of the form S[s]-T[t]. s is a sentiment index and t is a topic(aspect) index. Because of the definition of theta, the probabilities of all topics(aspects) must sum up to 1 for each sentiment.\
+\
+
+\b 	Phi
+\b0 \
+		Word X Aspect Matrix\
+		For the column headers, see Theta. Because of the definition of Phi, the probabilities of all words must sum up to 1 for each topic(aspect).\
+\
+
+\b 	Pi
+\b0 \
+		Document X Sentiment Matrix\
+		Because of the definition of Pi, the probabilities of all sentiments must sum up to 1 for each document.\
+\
+
+\b 	ProbWords
+\b0 \
+		In this file, the top 100 words for each topic(aspect) are listed in descending order. The number of words to show is currently hard-coded in the source code.\
+\
+\
+\
+
+\b\fs30 Program Arguments
+\b0\fs24 \
+\
+
+\b Example
+\b0 \
+	-s 2 -t 30 -i 1000 -th 3 -a 0.1 -b 0.001/0.1/0 -g 1/1 -d /home/user/input -o /home/user/output\
+\
+
+\b Options
+\b0 \
+-s\
+	Number of sentiments\
+-t\
+	Number of topics(aspects) per sentiment\
+-i\
+	Number of sampling iterations\
+-th\
+	Number of threads to use\
+	Note that this multi-thread version is a simple approximation (see Newman et al., Distributed Inference for Latent Dirichlet Allocation), and has no theoretical guarantee of yielding a correct result, though it works pretty well in practice.\
+-a\
+	Symmetric alpha value\
+-b\
+	Beta values\
+	Three numbers should be specified, separated by slash(/). The first number is the value for non-seed words. All non-seed words have the same beta value for all sentiments. The second number is the value for seed words 
+\i in the corresponding sentiment
+\i0 . The third number is the value for seed words 
+\i in the other sentiments
+\i0 .\
+	For example, suppose we use two sentiments, one for positive and the other for negative, and two sentiment seed files. For the positive sentiment, we want to set beta to 0.1 for positive seed words, 0 for negative seed words, and 0.001 for the other words. Then, this option has the value of 0.001/0.1/0. Then, the beta is automatically set for the negative sentiment accordingly.\
+-g\
+	Gamma\
+	The elements of gamma are separated by slash(/). The number of specified numbers should be the same as the number of sentiments. For example, if there are two sentiments and we have no prior knowledge of sentiment distribution, we may set 1/1.\
+-d\
+	Directory path under which all input files are located\
+-o\
+	Directory path under which output files will be written\
+	If this option is not set, the output directory is assumed to be the same as the input directory.\
+-dic\
+	Directory path under which seed word files are located\
+	If this option is not set, the seed files are assumed to be located in the input directory.\
+\
+}
